@@ -36,7 +36,7 @@ void setup() {
 void loop() {
   while (Serial1.available()) {
     timeoutCnt = 1;
-    char c = 0;
+    uint8_t c = 0;
     c = Serial1.read();
 
     if (c == 0xaa) {
