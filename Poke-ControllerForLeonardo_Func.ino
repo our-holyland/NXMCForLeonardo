@@ -115,16 +115,17 @@ void ParseLine(char* line)
     //softwareReset::standard();
     proc_state = NONE;
   } else if (cmd[0] == 0xaa) {
-    p_btns = line[5] | (line[6] << 8);
-    hat = line[7];
-    if (line[8] & 1) pc_lx = STICK_MIN;
-    if (line[8] & 2) pc_lx = STICK_MAX;
-    if (line[8] & 4) pc_ly = STICK_MIN;
-    if (line[8] & 8) pc_ly = STICK_MAX;
-    if (line[9] & 1) pc_rx = STICK_MIN;
-    if (line[9] & 2) pc_rx = STICK_MAX;
-    if (line[9] & 4) pc_ry = STICK_MIN;
-    if (line[9] & 8) pc_ry = STICK_MAX;
+    uint8_t* data = (uint8_t*)line;
+    p_btns = data[5] | ((uint16_t)data[6] << 8);
+    hat = data[7];
+    if (data[8] & 1) pc_lx = STICK_MIN;
+    if (data[8] & 2) pc_lx = STICK_MAX;
+    if (data[8] & 4) pc_ly = STICK_MIN;
+    if (data[8] & 8) pc_ly = STICK_MAX;
+    if (data[9] & 1) pc_rx = STICK_MIN;
+    if (data[9] & 2) pc_rx = STICK_MAX;
+    if (data[9] & 4) pc_ry = STICK_MIN;
+    if (data[9] & 8) pc_ry = STICK_MAX;
 
     pc_report.Button = p_btns;
     pc_report.Hat = hat;
@@ -135,12 +136,13 @@ void ParseLine(char* line)
 
     proc_state = PC_CALL;
   } else if (cmd[0] == 0xab) {
-    p_btns = line[1] | (line[2] << 8);
-    hat = line[3];
-    pc_lx = line[4];
-    pc_ly = line[5];
-    pc_rx = line[6];
-    pc_ry = line[7];
+    uint8_t* data = (uint8_t*)line;
+    p_btns = data[1] | ((uint16_t)data[2] << 8);
+    hat = data[3];
+    pc_lx = data[4];
+    pc_ly = data[5];
+    pc_rx = data[6];
+    pc_ry = data[7];
 
     pc_report.Button = p_btns;
     pc_report.Hat = hat;
