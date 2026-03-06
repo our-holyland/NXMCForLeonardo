@@ -76,7 +76,7 @@ void Serial_Init()
 }
 void Serial1_Init()
 {
-  Serial1.begin(9600);
+  Serial1.begin(SERIAL1_BAUD_RATE);
   while (!Serial1);
 }
 void Controller_Init()

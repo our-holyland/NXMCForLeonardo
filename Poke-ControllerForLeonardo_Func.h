@@ -3,6 +3,9 @@
 
 #include "switch_controller_plus.h"
 
+// Baud rate for Serial1 (CH552 communication). Must match the CH552 side.
+#define SERIAL1_BAUD_RATE 9600
+
 #define	INDEX_ARRAY_YEAR	(30)
 #define	INDEX_ARRAY_MONTH	(32)
 #define	INDEX_ARRAY_DAY		(34)
