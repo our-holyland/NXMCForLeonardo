@@ -152,19 +152,19 @@ void ParseLine(char* line)
     pc_report.RY = pc_ry;
 
     // keyboard
-    if (line[8] == 1) {
+    if (data[8] == 1) {
       // normal press
-      BootKeyboard.press(line[9]);
-    } else if (line[8] == 2) {
+      BootKeyboard.press((char)data[9]);
+    } else if (data[8] == 2) {
       // normal release
-      BootKeyboard.release(line[9]);
-    } else if (line[8] == 3) {
+      BootKeyboard.release((char)data[9]);
+    } else if (data[8] == 3) {
       // special press
-      BootKeyboard_PressSpecialKey(line[9]);
-    } else if (line[8] == 4) {
+      BootKeyboard_PressSpecialKey(data[9]);
+    } else if (data[8] == 4) {
       // special release
-      BootKeyboard_ReleaseSpecialKey(line[9]);
-    } else if (line[8] == 5) {
+      BootKeyboard_ReleaseSpecialKey(data[9]);
+    } else if (data[8] == 5) {
       // all release
       BootKeyboard.releaseAll();
     }
