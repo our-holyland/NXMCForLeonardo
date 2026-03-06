@@ -25,6 +25,7 @@ static char chrread[MAX_BUFFER];
 static int ProgState = 0;
 static uint16_t idx = 0;
 static uint32_t timeoutCnt = 0;
+static uint8_t nxFrameLen = 0;
 
 void setup() {
   Serial1_Init();//RX←0でのシリアル通信
@@ -42,11 +43,13 @@ void loop() {
       if (idx == 0) {
         isNx2 = true;
         isText = false;
+        nxFrameLen = 10;
       }
     } else if (c == 0xab) {
       if (idx == 0) {
         isNx2 = true;
         isText = false;
+        nxFrameLen = 11;
       }
     } else if (c == '\"') {
       if (idx == 0) {
@@ -63,7 +66,7 @@ void loop() {
     if ((c != '\n' || isNx2 || isText) && idx < MAX_BUFFER)
       pc_report_str[idx++] = c;
 
-    if ((c == '\r' && !isNx2 && !isText) || (isNx2 && idx == 11) || (isText && c == '\n' && pc_report_str[idx - 2] == '\r' && pc_report_str[idx - 3] == '\"')) {
+    if ((c == '\r' && !isNx2 && !isText) || (isNx2 && idx == nxFrameLen) || (isText && c == '\n' && pc_report_str[idx - 2] == '\r' && pc_report_str[idx - 3] == '"')) {
       pc_report_str[idx++] = '\0';
       idx = 0;
       timeoutCnt = 0;
