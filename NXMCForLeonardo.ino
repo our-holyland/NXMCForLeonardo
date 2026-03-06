@@ -23,6 +23,8 @@ static String str = "";
 static String str_buff = "";
 static char chrread[MAX_BUFFER];
 static int ProgState = 0;
+static uint16_t idx = 0;
+static uint32_t timeoutCnt = 0;
 
 void setup() {
   Serial1_Init();//RX←0でのシリアル通信
@@ -31,36 +33,81 @@ void setup() {
 }
 
 void loop() {
-  //状態に応じて切り替える
-  switch (ProgState)
-  {
-    case STATE1:
-      SwitchFunction();
-      break;
-    default:
-      /* バグ回避を兼ねて状態の初期化を行う */
-      ProgState = STATE0;
-      break;
+  while (Serial1.available()) {
+    timeoutCnt = 1;
+    char c = 0;
+    c = Serial1.read();
+
+    if (c == 0xaa) {
+      if (idx == 0) {
+        isNx2 = true;
+        isText = false;
+      }
+    } else if (c == 0xab) {
+      if (idx == 0) {
+        isNx2 = true;
+        isText = false;
+      }
+    } else if (c == '\"') {
+      if (idx == 0) {
+        isText = true;
+        isNx2 = false;
+      }
+    } else {
+      if (idx == 0) {
+        isNx2 = false;
+        isText = false;
+      }
+    }
+
+    if ((c != '\n' || isNx2 || isText) && idx < MAX_BUFFER)
+      pc_report_str[idx++] = c;
+
+    if ((c == '\r' && !isNx2 && !isText) || (isNx2 && idx == 11) || (isText && c == '\n' && pc_report_str[idx - 2] == '\r' && pc_report_str[idx - 3] == '\"')) {
+      pc_report_str[idx++] = '\0';
+      idx = 0;
+      timeoutCnt = 0;
+      ParseLine(pc_report_str);
+      if (!isText && proc_state == PC_CALL) sendReportOnly(pc_report);
+      memset(pc_report_str, 0, sizeof(pc_report_str));
+    }
   }
+  if (timeoutCnt > 1000) {
+    idx = 0;
+    timeoutCnt = 0;
+  } else {
+    if (timeoutCnt > 0) timeoutCnt++;
+  }
+  //状態に応じて切り替える
+  //switch (ProgState)
+  //{
+  //  case STATE1:
+  //    SwitchFunction();
+  //    break;
+  //  default:
+  //    /* バグ回避を兼ねて状態の初期化を行う */
+  //    ProgState = STATE0;
+  //    break;
+  //}
 }
 
 //データが利用可能な時に呼び出される関数(Serial1)
 void serialEvent1()
 {
   // one character comes at a time
-  char c = Serial1.read();
+  //char c = Serial1.read();
 
-  if (c == '\n')
-  {
-    pc_report_str[idx++] = c;
-    pc_report_str[idx++] = '\0';
-    ParseLine(pc_report_str);
-    idx = 0;
-    memset(pc_report_str, 0, sizeof(pc_report_str));
-    ProgState = STATE1;
-  }
-  else if (idx < MAX_BUFFER)
-  {
-    pc_report_str[idx++] = c;
-  }
+  //if (c == '\n')
+  //{
+  //  pc_report_str[idx++] = c;
+  //  pc_report_str[idx++] = '\0';
+  //  ParseLine(pc_report_str);
+  //  idx = 0;
+  //  memset(pc_report_str, 0, sizeof(pc_report_str));
+  //  ProgState = STATE1;
+  //}
+  //else if (idx < MAX_BUFFER)
+  //{
+  //  pc_report_str[idx++] = c;
+  //}
 }

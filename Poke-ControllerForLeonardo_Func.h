@@ -24,7 +24,34 @@
 // Serial communication
 #define MAX_BUFFER 32
 volatile char pc_report_str[MAX_BUFFER];
-volatile uint8_t idx = 0;
+
+volatile bool isNx2 = false;
+volatile bool isText = false;
+
+typedef enum {
+  NONE,   // do nothing
+  // On MCU
+  MASH_A,   // mash button A
+  AAABB,   // AAABB
+  AUTO_LEAGUE,// auto league
+  INF_WATT,   // infinity watt
+  PICKUPBERRY,
+  CHANGETHEDATE,  // Change the Date
+  CHANGETHEYEAR,  // Change the Year
+  P_SYNC,
+  P_UNSYNC,
+  DEBUG,
+  DEBUG2,
+
+  // From PC
+  PC_CALL,
+  PC_CALL_STRING,
+  PC_CALL_KEYBOARD,
+  PC_CALL_KEYBOARD_PRESS,
+  PC_CALL_KEYBOARD_RELEASE,
+} Proc_State_t;
+
+volatile Proc_State_t proc_state = NONE;
 
 const typedef enum {
   COMMAND_NONE,
