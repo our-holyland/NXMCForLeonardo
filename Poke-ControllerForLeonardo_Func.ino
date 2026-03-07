@@ -114,7 +114,9 @@ void ParseLine(char* line)
   } else if (strncmp(cmd, "resetMcu", 16) == 0) {
     //softwareReset::standard();
     proc_state = NONE;
-  } else if (cmd[0] == 0xaa) {
+  } else if (cmd[0] == (char)0xaa) {
+    memset(&pc_report, 0, sizeof(uint16_t));
+    ResetDirections();
     p_btns = line[5] | (line[6] << 8);
     hat = line[7];
     if (line[8] & 1) pc_lx = STICK_MIN;
@@ -134,7 +136,9 @@ void ParseLine(char* line)
     pc_report.RY = pc_ry;
 
     proc_state = PC_CALL;
-  } else if (cmd[0] == 0xab) {
+  } else if (cmd[0] == (char)0xab) {
+    memset(&pc_report, 0, sizeof(uint16_t));
+
     p_btns = line[1] | (line[2] << 8);
     hat = line[3];
     pc_lx = line[4];

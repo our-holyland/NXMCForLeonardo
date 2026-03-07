@@ -38,12 +38,12 @@ void loop() {
     char c = 0;
     c = Serial1.read();
 
-    if (c == 0xaa) {
+    if (c == (char)0xaa) {
       if (idx == 0) {
         isNx2 = true;
         isText = false;
       }
-    } else if (c == 0xab) {
+    } else if (c == (char)0xab) {
       if (idx == 0) {
         isNx2 = true;
         isText = false;
