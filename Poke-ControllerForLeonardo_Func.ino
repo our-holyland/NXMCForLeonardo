@@ -76,7 +76,7 @@ void Serial_Init()
 }
 void Serial1_Init()
 {
-  Serial1.begin(9600);
+  Serial1.begin(SERIAL1_BAUD_RATE);
   while (!Serial1);
 }
 void Controller_Init()
@@ -114,19 +114,20 @@ void ParseLine(char* line)
   } else if (strncmp(cmd, "resetMcu", 16) == 0) {
     //softwareReset::standard();
     proc_state = NONE;
-  } else if (cmd[0] == (char)0xaa) {
+  } else if ((uint8_t)cmd[0] == 0xaa) {
     memset(&pc_report, 0, sizeof(uint16_t));
     ResetDirections();
-    p_btns = line[5] | (line[6] << 8);
-    hat = line[7];
-    if (line[8] & 1) pc_lx = STICK_MIN;
-    if (line[8] & 2) pc_lx = STICK_MAX;
-    if (line[8] & 4) pc_ly = STICK_MIN;
-    if (line[8] & 8) pc_ly = STICK_MAX;
-    if (line[9] & 1) pc_rx = STICK_MIN;
-    if (line[9] & 2) pc_rx = STICK_MAX;
-    if (line[9] & 4) pc_ry = STICK_MIN;
-    if (line[9] & 8) pc_ry = STICK_MAX;
+    uint8_t* data = (uint8_t*)line;
+    p_btns = data[5] | ((uint16_t)data[6] << 8);
+    hat = data[7];
+    if (data[8] & 1) pc_lx = STICK_MIN;
+    if (data[8] & 2) pc_lx = STICK_MAX;
+    if (data[8] & 4) pc_ly = STICK_MIN;
+    if (data[8] & 8) pc_ly = STICK_MAX;
+    if (data[9] & 1) pc_rx = STICK_MIN;
+    if (data[9] & 2) pc_rx = STICK_MAX;
+    if (data[9] & 4) pc_ry = STICK_MIN;
+    if (data[9] & 8) pc_ry = STICK_MAX;
 
     pc_report.Button = p_btns;
     pc_report.Hat = hat;
@@ -136,15 +137,15 @@ void ParseLine(char* line)
     pc_report.RY = pc_ry;
 
     proc_state = PC_CALL;
-  } else if (cmd[0] == (char)0xab) {
+  } else if ((uint8_t)cmd[0] == 0xab) {
     memset(&pc_report, 0, sizeof(uint16_t));
-
-    p_btns = line[1] | (line[2] << 8);
-    hat = line[3];
-    pc_lx = line[4];
-    pc_ly = line[5];
-    pc_rx = line[6];
-    pc_ry = line[7];
+    uint8_t* data = (uint8_t*)line;
+    p_btns = data[1] | ((uint16_t)data[2] << 8);
+    hat = data[3];
+    pc_lx = data[4];
+    pc_ly = data[5];
+    pc_rx = data[6];
+    pc_ry = data[7];
 
     pc_report.Button = p_btns;
     pc_report.Hat = hat;
@@ -154,19 +155,19 @@ void ParseLine(char* line)
     pc_report.RY = pc_ry;
 
     // keyboard
-    if (line[8] == 1) {
+    if (data[8] == 1) {
       // normal press
-      BootKeyboard.press(line[9]);
-    } else if (line[8] == 2) {
+      BootKeyboard.press((char)data[9]);
+    } else if (data[8] == 2) {
       // normal release
-      BootKeyboard.release(line[9]);
-    } else if (line[8] == 3) {
+      BootKeyboard.release((char)data[9]);
+    } else if (data[8] == 3) {
       // special press
-      BootKeyboard_PressSpecialKey(line[9]);
-    } else if (line[8] == 4) {
+      BootKeyboard_PressSpecialKey(data[9]);
+    } else if (data[8] == 4) {
       // special release
-      BootKeyboard_ReleaseSpecialKey(line[9]);
-    } else if (line[8] == 5) {
+      BootKeyboard_ReleaseSpecialKey(data[9]);
+    } else if (data[8] == 5) {
       // all release
       BootKeyboard.releaseAll();
     }

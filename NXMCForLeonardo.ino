@@ -35,15 +35,15 @@ void setup() {
 void loop() {
   while (Serial1.available()) {
     timeoutCnt = 1;
-    char c = 0;
+    uint8_t c = 0;
     c = Serial1.read();
 
-    if (c == (char)0xaa) {
+    if (c == 0xaa) {
       if (idx == 0) {
         isNx2 = true;
         isText = false;
       }
-    } else if (c == (char)0xab) {
+    } else if (c == 0xab) {
       if (idx == 0) {
         isNx2 = true;
         isText = false;
