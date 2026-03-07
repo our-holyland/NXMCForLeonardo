@@ -63,7 +63,7 @@ void loop() {
     if ((c != '\n' || isNx2 || isText) && idx < MAX_BUFFER)
       pc_report_str[idx++] = c;
 
-    if ((c == '\r' && !isNx2 && !isText) || (isNx2 && idx == 11) || (isText && c == '\n' && pc_report_str[idx - 2] == '\r' && pc_report_str[idx - 3] == '"')) {
+    if ((c == '\r' && !isNx2 && !isText) || (isNx2 && idx == 11) || (isText && c == '\n' && pc_report_str[idx - 2] == '\r' && pc_report_str[idx - 3] == '\"')) {
       pc_report_str[idx++] = '\0';
       idx = 0;
       timeoutCnt = 0;
