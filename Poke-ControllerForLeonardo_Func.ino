@@ -115,6 +115,8 @@ void ParseLine(char* line)
     //softwareReset::standard();
     proc_state = NONE;
   } else if ((uint8_t)cmd[0] == 0xaa) {
+    memset(&pc_report, 0, sizeof(uint16_t));
+    ResetDirections();
     uint8_t* data = (uint8_t*)line;
     p_btns = data[5] | ((uint16_t)data[6] << 8);
     hat = data[7];
@@ -136,6 +138,7 @@ void ParseLine(char* line)
 
     proc_state = PC_CALL;
   } else if ((uint8_t)cmd[0] == 0xab) {
+    memset(&pc_report, 0, sizeof(uint16_t));
     uint8_t* data = (uint8_t*)line;
     p_btns = data[1] | ((uint16_t)data[2] << 8);
     hat = data[3];
