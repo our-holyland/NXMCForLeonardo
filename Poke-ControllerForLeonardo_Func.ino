@@ -116,6 +116,10 @@ void ParseLine(char* line)
     proc_state = NONE;
   } else if ((uint8_t)cmd[0] == 0xaa) {
     memset(&pc_report, 0, sizeof(uint16_t));
+    pc_lx = STICK_CENTER;
+    pc_ly = STICK_CENTER;
+    pc_rx = STICK_CENTER;
+    pc_ry = STICK_CENTER;
     ResetDirections();
     uint8_t* data = (uint8_t*)line;
     p_btns = data[5] | ((uint16_t)data[6] << 8);
